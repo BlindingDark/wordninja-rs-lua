@@ -19,7 +19,7 @@ jobs:
     - uses: msys2/setup-msys2@v2
     - name: Install Lua
       run: |
-        pacman -S --noconfirm mingw-w64-lua mingw-w64-pkg-config
+        pacman -S --noconfirm mingw-w64-i686-lua mingw-w64-x86_64-lua mingw-w64-i686-pkg-config mingw-w64-x86_64-pkg-config
 
     - name: Rust cache
       uses: Swatinem/rust-cache@v1
