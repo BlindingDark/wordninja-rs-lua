@@ -9,16 +9,22 @@ jobs:
       matrix:
         os: [windows-latest]
         rust: [stable]
-
+    defaults:
+      run:
+        shell: msys2 {0}
     steps:
     - uses: hecrj/setup-rust-action@v1
       with:
         rust-version: ${{ matrix.rust }}
-    - uses: actions/checkout@master
+    - uses: msys2/setup-msys2@v2
+    - name: Install Lua
+      run: |
+        pacman -S --noconfirm mingw-w64-lua mingw-w64-pkg-config
 
     - name: Rust cache
       uses: Swatinem/rust-cache@v1
 
+    - uses: actions/checkout@master
     - name: Build windows
       if: matrix.os == 'windows-latest'
       run: cargo build --release --features lua53
