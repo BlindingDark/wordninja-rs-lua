@@ -20,7 +20,7 @@ luajit = ["mlua/luajit"]
 
 [dependencies]
 wordninja = "0.1"
-mlua = { version = "0.5", features = ["module", "vendored"] }
+mlua = { version = "0.5", features = ["module"] }
 
 [lib]
 crate-type = ["cdylib"]
