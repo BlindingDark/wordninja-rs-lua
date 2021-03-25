@@ -30,6 +30,7 @@ jobs:
         path: target/release/libwordninja_rs_lua.dll
 
   release-latest:
+    needs: [build-latest]
     name: release-latest
     runs-on: ubuntu-latest
     steps:
