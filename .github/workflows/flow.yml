@@ -25,6 +25,7 @@ jobs:
     - name: Build windows
       if: matrix.os == 'windows-latest'
       run: cargo build --release --features lua53
+    - run: ls target/release
     - name: Upload windows target
       if: matrix.os == 'windows-latest'
       uses: actions/upload-artifact@v2
