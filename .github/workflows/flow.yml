@@ -1,0 +1,45 @@
+on: [push, pull_request]
+
+name: Continuous integration
+
+jobs:
+  build-latest:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest]
+        rust: [stable]
+
+    steps:
+    - uses: hecrj/setup-rust-action@v1
+      with:
+        rust-version: ${{ matrix.rust }}
+    - uses: actions/checkout@master
+
+    - name: Rust cache
+      uses: Swatinem/rust-cache@v1
+
+    - name: Build windows
+      if: matrix.os == 'windows-latest'
+      run: cargo build --release
+    - name: Upload windows target
+      if: matrix.os == 'windows-latest'
+      uses: actions/upload-artifact@v2
+      with:
+        name: wordninja-lua-windows
+        path: target/release/libwordninja_rs_lua.dll
+
+  release-latest:
+    name: release-latest
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download the artifacts to release
+        uses: actions/download-artifact@v2
+      - uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: ${{ startsWith(github.ref, 'refs/heads') && 'latest' || null }}
+          prerelease: ${{ startsWith(github.ref, 'refs/heads') }}
+          title: ${{ startsWith(github.ref, 'refs/heads') && 'Latest' || null }}
+          files: |
+            wordninja-lua-windows
