@@ -13,13 +13,10 @@ jobs:
       run:
         shell: msys2 {0}
     steps:
-    - uses: hecrj/setup-rust-action@v1
-      with:
-        rust-version: ${{ matrix.rust }}
     - uses: msys2/setup-msys2@v2
-    - name: Install Lua
+    - name: Install Rust and Lua
       run: |
-        pacman -S --noconfirm mingw-w64-i686-lua mingw-w64-x86_64-lua mingw-w64-i686-pkg-config mingw-w64-x86_64-pkg-config
+        pacman -S --noconfirm mingw-w64-x86_64-rust mingw-w64-i686-lua mingw-w64-x86_64-lua mingw-w64-i686-pkg-config mingw-w64-x86_64-pkg-config
 
     - name: Rust cache
       uses: Swatinem/rust-cache@v1
