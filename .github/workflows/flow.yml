@@ -7,16 +7,13 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macOS-latest]
+        os: [ubuntu-latest]
         rust: [stable]
         lua: [lua53]
         include:
         - os: ubuntu-latest
           os-prefix: linux
           ext: so
-        - os: macOS-latest
-          os-prefix: macos
-          ext: dylib
     steps:
     - uses: actions/checkout@master
     - uses: hecrj/setup-rust-action@v1
@@ -24,18 +21,9 @@ jobs:
         rust-version: ${{ matrix.rust }}
 
     - name: Build ${{ matrix.os }} ${{ matrix.lua }} pkg-config
-      if: ${{ matrix.os == 'ubuntu-latest' }}
       run: |
         sudo apt-get update
         sudo apt-get install -y --no-install-recommends liblua5.3-dev
-
-    - name: Build ${{ matrix.os }} ${{ matrix.lua }} pkg-config
-      if: ${{ matrix.os == 'macOS-latest' }}
-      run: |
-        brew install lua@5.3
-        export LDFLAGS="-L/usr/local/opt/lua@5.3/lib"
-        export CPPFLAGS="-I/usr/local/opt/lua@5.3/include"
-        export PKG_CONFIG_PATH="/usr/local/opt/lua@5.3/lib/pkgconfig"
 
     - name: Rust cache
       uses: Swatinem/rust-cache@v1
@@ -141,4 +129,3 @@ jobs:
             wordninja-windows-32-lua53
             wordninja-windows-64-lua53
             wordninja-linux-lua53
-            wordninja-macos-lua53
