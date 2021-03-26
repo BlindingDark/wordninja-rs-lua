@@ -6,8 +6,8 @@
 
 [mit-badge]: https://img.shields.io/badge/license-MIT-blue.svg
 [mit-url]: LICENSE
-[aur-badge]: https://img.shields.io/aur/version/wordninja-rs.svg
-[aur-url]: https://aur.archlinux.org/packages/wordninja-rs
+[aur-badge]: https://img.shields.io/aur/version/wordninja-rs-lua-git.svg
+[aur-url]: https://aur.archlinux.org/packages/wordninja-rs-lua-git
 
 **You MUST rename target file to `wordninja.so` (or `wordninja.dll` if use Windows) before require it in Lua.**
 
