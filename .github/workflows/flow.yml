@@ -18,13 +18,12 @@ jobs:
           os-prefix: macos
           ext: dylib
     steps:
+    - uses: actions/checkout@master
     - uses: hecrj/setup-rust-action@v1
       with:
         rust-version: ${{ matrix.rust }}
     - name: Install Lua
       uses: leafo/gh-actions-lua@v8
-
-    - uses: actions/checkout@master
 
     - name: Rust cache
       uses: Swatinem/rust-cache@v1
@@ -47,7 +46,7 @@ jobs:
       matrix:
         os: [windows-latest]
         rust: [stable]
-        lua: [lua54, lua53]
+        lua: [lua53]
     defaults:
       run:
         shell: msys2 {0}
@@ -56,11 +55,11 @@ jobs:
       with:
         msystem: MINGW32
 
+    - uses: actions/checkout@master
+
     - name: Install Rust and Lua
       run: |
         pacman -S --noconfirm mingw-w64-i686-rust mingw-w64-i686-lua mingw-w64-i686-pkg-config
-
-    - uses: actions/checkout@master
 
     - name: Rust cache
       uses: Swatinem/rust-cache@v1
@@ -82,7 +81,7 @@ jobs:
       matrix:
         os: [windows-latest]
         rust: [stable]
-        lua: [lua54, lua53]
+        lua: [lua53]
     defaults:
       run:
         shell: msys2 {0}
@@ -91,11 +90,11 @@ jobs:
       with:
         msystem: MINGW64
 
+    - uses: actions/checkout@master
+
     - name: Install Rust and Lua
       run: |
         pacman -S --noconfirm mingw-w64-x86_64-rust mingw-w64-x86_64-lua mingw-w64-x86_64-pkg-config
-
-    - uses: actions/checkout@master
 
     - name: Rust cache
       uses: Swatinem/rust-cache@v1
@@ -125,9 +124,7 @@ jobs:
           prerelease: ${{ startsWith(github.ref, 'refs/heads') }}
           title: ${{ startsWith(github.ref, 'refs/heads') && 'Latest' || null }}
           files: |
-            wordninja-windows-32-lua54
             wordninja-windows-32-lua53
-            wordninja-windows-64-lua54
             wordninja-windows-64-lua53
             wordninja-linux-lua54
             wordninja-linux-lua53
