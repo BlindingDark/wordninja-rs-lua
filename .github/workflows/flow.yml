@@ -22,8 +22,17 @@ jobs:
     - uses: hecrj/setup-rust-action@v1
       with:
         rust-version: ${{ matrix.rust }}
-    - name: Install Lua
-      uses: leafo/gh-actions-lua@v8
+
+    - name: Build ${{ matrix.os }} ${{ matrix.lua }} pkg-config
+      if: ${{ matrix.os == 'ubuntu-latest' }}
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y --no-install-recommends liblua5.4-dev liblua5.3-dev
+
+    - name: Build ${{ matrix.os }} ${{ matrix.lua }} pkg-config
+      if: ${{ matrix.os == 'macOS-latest' }}
+      run: |
+        brew install lua@5.4 lua@5.3
 
     - name: Rust cache
       uses: Swatinem/rust-cache@v1
@@ -65,9 +74,10 @@ jobs:
       uses: Swatinem/rust-cache@v1
 
     - name: Build windows
-      run: |
-        cargo build --release --features ${{ matrix.lua }}
-        mv target/release/wordninja_rs_lua.dll wordninja_${{ matrix.lua }}.dll
+      run: cargo build --release --features ${{ matrix.lua }}
+
+    - name: Rename target
+      run: mv target/release/wordninja_rs_lua.dll wordninja_${{ matrix.lua }}.dll
 
     - name: Upload windows target
       uses: actions/upload-artifact@v2
@@ -100,9 +110,13 @@ jobs:
       uses: Swatinem/rust-cache@v1
 
     - name: Build windows
-      run: |
-        cargo build --release --features ${{ matrix.lua }}
-        mv target/release/wordninja_rs_lua.dll wordninja_${{ matrix.lua }}.dll
+      run: cargo build --release --features ${{ matrix.lua }}
+
+    - name: Rename target
+      run: mv target/release/wordninja_rs_lua.dll wordninja_${{ matrix.lua }}.dll
+
+    - run: ls target/release
+    - run: ls
 
     - name: Upload windows target
       uses: actions/upload-artifact@v2
