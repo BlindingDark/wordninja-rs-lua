@@ -7,8 +7,45 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
+        os: [ubuntu-latest, macOS-latest]
+        rust: [stable]
+        lua: [lua54, lua53]
+        include:
+        - os: ubuntu-latest
+          os-prefix: linux
+          ext: so
+        - os: macOS-latest
+          os-prefix: macos
+          ext: dylib
+    steps:
+    - uses: hecrj/setup-rust-action@v1
+      with:
+        rust-version: ${{ matrix.rust }}
+
+    - uses: actions/checkout@master
+
+    - name: Rust cache
+      uses: Swatinem/rust-cache@v1
+
+    - name: Build ${{ matrix.lua }} target
+      run: cargo build --release --features "${{ matrix.lua }}"
+
+    - name: Rename target ${{ matrix.os-prefix }}
+      run: mv target/release/libwordninja_rs_lua.${{ matrix.ext }} wordninja_${{ matrix.os-prefix }}_${{ matrix.lua }}.so
+
+    - name: Upload target
+      uses: actions/upload-artifact@v2
+      with:
+        name: wordninja-${{ matrix.os-prefix }}-${{ matrix.lua }}
+        path: wordninja_${{ matrix.os-prefix }}_${{ matrix.lua }}.so
+
+  build-latest-win32:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
         os: [windows-latest]
         rust: [stable]
+        lua: [lua54, lua53]
     defaults:
       run:
         shell: msys2 {0}
@@ -16,27 +53,64 @@ jobs:
     - uses: msys2/setup-msys2@v2
       with:
         msystem: MINGW32
+
     - name: Install Rust and Lua
       run: |
         pacman -S --noconfirm mingw-w64-i686-rust mingw-w64-i686-lua mingw-w64-i686-pkg-config
 
+    - uses: actions/checkout@master
+
     - name: Rust cache
       uses: Swatinem/rust-cache@v1
 
-    - uses: actions/checkout@master
     - name: Build windows
-      if: matrix.os == 'windows-latest'
-      run: cargo build --release --features lua53
-    - run: ls target/release
+      run: |
+        cargo build --release --features ${{ matrix.lua }}
+        mv target/release/wordninja_rs_lua.dll wordninja_${{ matrix.lua }}.dll
+
     - name: Upload windows target
-      if: matrix.os == 'windows-latest'
       uses: actions/upload-artifact@v2
       with:
-        name: wordninja-lua-windows
-        path: target/release/wordninja_rs_lua.dll
+        name: wordninja-windows-32-${{ matrix.lua }}
+        path: wordninja_windows_32_${{ matrix.lua }}.dll
+
+  build-latest-win64:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest]
+        rust: [stable]
+        lua: [lua54, lua53]
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+    - uses: msys2/setup-msys2@v2
+      with:
+        msystem: MINGW64
+
+    - name: Install Rust and Lua
+      run: |
+        pacman -S --noconfirm mingw-w64-x86_64-rust mingw-w64-x86_64-lua mingw-w64-x86_64-pkg-config
+
+    - uses: actions/checkout@master
+
+    - name: Rust cache
+      uses: Swatinem/rust-cache@v1
+
+    - name: Build windows
+      run: |
+        cargo build --release --features ${{ matrix.lua }}
+        mv target/release/wordninja_rs_lua.dll wordninja_${{ matrix.lua }}.dll
+
+    - name: Upload windows target
+      uses: actions/upload-artifact@v2
+      with:
+        name: wordninja-windows-64-${{ matrix.lua }}
+        path: wordninja_windows_64_${{ matrix.lua }}.dll
 
   release-latest:
-    needs: [build-latest]
+    needs: [build-latest build-latest-win32 build-latest-win64]
     name: release-latest
     runs-on: ubuntu-latest
     steps:
@@ -49,4 +123,11 @@ jobs:
           prerelease: ${{ startsWith(github.ref, 'refs/heads') }}
           title: ${{ startsWith(github.ref, 'refs/heads') && 'Latest' || null }}
           files: |
-            wordninja-lua-windows
+            wordninja-windows-32-lua54
+            wordninja-windows-32-lua53
+            wordninja-windows-64-lua54
+            wordninja-windows-64-lua53
+            wordninja-linux-lua54
+            wordninja-linux-lua53
+            wordninja-macos-lua54
+            wordninja-macos-lua53

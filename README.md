@@ -1,5 +1,6 @@
-# Word Ninja Lua
-[Wordninja](https://github.com/keredson/wordninja) lua native module.
+# Word Ninja Rust Lua
+
+[Wordninja Rust](https://github.com/chengyuhui/wordninja-rs) lua native module.
 
 [![MIT licensed][mit-badge]][mit-url]
 
