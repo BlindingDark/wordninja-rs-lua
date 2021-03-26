@@ -110,7 +110,7 @@ jobs:
         path: wordninja_windows_64_${{ matrix.lua }}.dll
 
   release-latest:
-    needs: [build-latest build-latest-win32 build-latest-win64]
+    needs: [build-latest, build-latest-win32, build-latest-win64]
     name: release-latest
     runs-on: ubuntu-latest
     steps:
