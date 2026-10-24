@@ -1,0 +1,5 @@
+---
+name: aliases
+columns: [weight, code, text]
+...
+999999	serde	SERDE

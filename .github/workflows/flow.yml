@@ -23,13 +23,21 @@ jobs:
       - name: Build ${{ matrix.os }} ${{ matrix.lua }} pkg-config
         run: |
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends liblua5.3-dev liblua5.4-dev
+          sudo apt-get install -y --no-install-recommends liblua5.3-dev liblua5.4-dev lua5.3 lua5.4
 
       - name: Rust cache
         uses: Swatinem/rust-cache@v2
 
       - name: Build ${{ matrix.lua }} target
         run: cargo build --release --features "${{ matrix.lua }}"
+
+      - name: Test vocabulary models
+        run: cargo test --features "${{ matrix.lua }}"
+
+      - name: Test Lua API
+        run: |
+          if [ "${{ matrix.lua }}" = lua53 ]; then LUA=lua5.3; else LUA=lua5.4; fi
+          "$LUA" tests/smoke.lua target/release/libwordninja_rs_lua.so
 
       - name: Rename target ${{ matrix.os-prefix }}
         run: mv target/release/libwordninja_rs_lua.${{ matrix.ext }} wordninja_${{ matrix.os-prefix }}_${{ matrix.lua }}.so

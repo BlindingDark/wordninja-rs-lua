@@ -19,8 +19,13 @@ lua51 = ["mlua/lua51"]
 luajit = ["mlua/luajit"]
 
 [dependencies]
-wordninja = "0.1"
+wordninja = "=0.1.0"
 mlua = { version = "0.10", features = ["module"] }
+serde_yaml = "0.9.34"
+lazy_static = "1.4.0"
+
+[build-dependencies]
+serde_json = "1"
 
 [lib]
 crate-type = ["cdylib"]

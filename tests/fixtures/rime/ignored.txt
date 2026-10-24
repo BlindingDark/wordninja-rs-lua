@@ -1,0 +1,1 @@
+This file must not be parsed as a Rime dictionary.

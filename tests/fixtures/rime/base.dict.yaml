@@ -1,0 +1,8 @@
+# Synthetic vocabulary for the module tests, not a user dictionary.
+---
+name: ignoredheaderword
+version: "1"
+...
+Serde	serde	10
+VecDeque	vecdeque	5
+the	the	100
